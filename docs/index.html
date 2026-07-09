@@ -1,208 +1,222 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="PureSeaGS: Decoupled Physics-Aware 3D Gaussian Splatting for Underwater Scene Reconstruction">
+  <meta charset="utf-8">
+  <meta name="description"
+        content="PureSeaGS: Decoupled Physics-Aware 3D Gaussian Splatting for Underwater Scene Reconstruction">
+  <meta name="keywords" content="PureSeaGS, Underwater, 3D Gaussian Splatting, Novel View Synthesis, Image Formation Model">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>PureSeaGS | Physics-Aware Underwater 3DGS</title>
 
-  <style>
-    /* === Reset & Base === */
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  <link href="https://fonts.googleapis.com/css?family=Google+Sans|Noto+Sans|Castoro" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma-carousel@4.0.3/dist/css/bulma-carousel.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma-slider@2.0.4/dist/css/bulma-slider.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/jpswalsh/academicons@1/css/academicons.min.css">
+  <link rel="stylesheet" href="static/css/index.css">
 
-    :root {
-      --bg: #ffffff; --text: #333333; --text-light: #666666;
-      --accent: #2563eb; --accent-hover: #1d4ed8;
-      --border: #e5e7eb; --code-bg: #f8fafc;
-      --max-width: 960px;
-    }
-
-    body {
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-      background: var(--bg); color: var(--text);
-      line-height: 1.6; -webkit-font-smoothing: antialiased;
-    }
-
-    /* === Layout === */
-    .container { max-width: var(--max-width); margin: 0 auto; padding: 0 24px; }
-
-    /* === Header === */
-    header { padding: 60px 0 20px; text-align: center; }
-    header h1 { font-size: 2.2rem; font-weight: 700; color: #111; letter-spacing: -0.5px; }
-    header .subtitle { font-size: 1.1rem; color: var(--text-light); margin-top: 8px; font-weight: 400; }
-    header .authors { font-size: 1.05rem; margin-top: 16px; color: #444; }
-    header .affiliation { font-size: 0.9rem; color: var(--text-light); margin-top: 4px; }
-    header .venue { display: inline-block; margin-top: 14px; padding: 4px 14px; border-radius: 20px;
-      background: #f0f0f0; font-size: 0.85rem; font-weight: 600; color: #555; }
-
-    /* === Buttons === */
-    .btn-row { display: flex; justify-content: center; gap: 12px; margin-top: 24px; flex-wrap: wrap; }
-    .btn {
-      display: inline-flex; align-items: center; gap: 6px;
-      padding: 10px 22px; border-radius: 8px; font-size: 0.95rem; font-weight: 600;
-      text-decoration: none; transition: all 0.2s ease;
-      border: 1.5px solid var(--border); color: #333; background: #fff;
-    }
-    .btn:hover { border-color: #bbb; background: #f9fafb; }
-    .btn.primary { background: var(--accent); color: #fff; border-color: var(--accent); }
-    .btn.primary:hover { background: var(--accent-hover); border-color: var(--accent-hover); }
-
-    /* === Teaser === */
-    .teaser { margin: 40px auto; text-align: center; }
-    .teaser img, .teaser video { max-width: 100%; border-radius: 12px; box-shadow: 0 2px 12px rgba(0,0,0,0.08); }
-
-    /* === Sections === */
-    section { padding: 40px 0; border-top: 1px solid var(--border); }
-    section h2 { font-size: 1.5rem; font-weight: 700; margin-bottom: 16px; color: #111; }
-    section h3 { font-size: 1.2rem; font-weight: 600; margin: 24px 0 10px; color: #222; }
-
-    /* === Abstract === */
-    .abstract p { font-size: 1.02rem; color: #444; text-align: justify; }
-
-    /* === Results Grid === */
-    .results-grid { display: grid; grid-template-columns: 1fr; gap: 32px; margin-top: 24px; }
-    @media (min-width: 768px) { .results-grid { grid-template-columns: 1fr 1fr; } }
-    .result-card { text-align: center; }
-    .result-card img { width: 100%; border-radius: 10px; box-shadow: 0 1px 8px rgba(0,0,0,0.06); }
-    .result-card .caption { font-size: 0.9rem; color: var(--text-light); margin-top: 8px; }
-
-    /* === BibTeX === */
-    .bibtex-box { position: relative; background: var(--code-bg); border: 1px solid var(--border);
-      border-radius: 10px; padding: 20px 24px; font-family: 'SF Mono', 'Fira Code', monospace;
-      font-size: 0.85rem; overflow-x: auto; white-space: pre-wrap; word-break: break-all; }
-    .copy-btn { position: absolute; top: 10px; right: 12px; padding: 4px 12px;
-      font-size: 0.8rem; background: #e5e7eb; border: none; border-radius: 6px; cursor: pointer; }
-    .copy-btn:hover { background: #d1d5db; }
-
-    /* === Footer === */
-    footer { text-align: center; padding: 32px 0 48px; font-size: 0.85rem; color: #999; }
-    footer a { color: #888; }
-
-    /* === Responsive === */
-    @media (max-width: 640px) {
-      header h1 { font-size: 1.6rem; }
-      .btn { padding: 8px 16px; font-size: 0.85rem; }
-    }
-  </style>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <script defer src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bulma-carousel@4.0.3/dist/js/bulma-carousel.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bulma-slider@2.0.4/dist/js/bulma-slider.min.js"></script>
+  <script src="static/js/video_comparison.js"></script>
+  <script src="static/js/index.js"></script>
 </head>
 <body>
 
-<!-- ===== Header ===== -->
-<header class="container">
-  <h1>PureSeaGS</h1>
-  <p class="subtitle">Decoupled Physics-Aware 3D Gaussian Splatting for Underwater Scene Reconstruction</p>
-  <p class="authors">
-    <strong>LZF</strong>
-  </p>
-  <p class="affiliation">School of Information Science and Technology</p>
-  <span class="venue">Under Review</span>
+<!-- ===== Hero / Title ===== -->
+<section class="hero">
+  <div class="hero-body">
+    <div class="container is-max-desktop">
+      <div class="columns is-centered">
+        <div class="column has-text-centered">
+          <h1 class="title is-1 publication-title">PureSeaGS</h1>
+          <h2 class="subtitle is-3" style="font-weight: 400;">
+            Decoupled Physics-Aware 3D Gaussian Splatting<br>for Underwater Scene Reconstruction
+          </h2>
 
-  <div class="btn-row">
-    <a href="#" class="btn primary">📄 Paper (arXiv)</a>
-    <a href="https://github.com/puresea-gs/pureseags" class="btn">💻 Code</a>
-    <a href="#" class="btn">🎥 Video</a>
-  </div>
-</header>
+          <div class="is-size-5 publication-authors">
+            <span class="author-block">
+              <a href="https://github.com/puresea-gs">LZF</a>
+            </span>
+          </div>
 
-<!-- ===== Teaser Figure ===== -->
-<div class="teaser container">
-  <img src="../.assets/pipeline.png" alt="PureSeaGS Pipeline Overview" />
-  <p style="color: #888;font-size: 0.9rem;margin-top: 8px;">
-    <strong>PureSeaGS pipeline:</strong> The Anisotropic Medium Field (AMF) decouples water medium properties from scene geometry, eliminating gradient entanglement.
-  </p>
-</div>
+          <div class="is-size-5 publication-authors">
+            <span class="author-block">School of Information Science and Technology</span>
+          </div>
 
-<!-- ===== Abstract ===== -->
-<section class="abstract">
-  <div class="container">
-    <h2>Abstract</h2>
-    <p>
-      Underwater 3D reconstruction inherently suffers from the physical conflict between continuous optical media
-      and existing discrete representation methods. Applying explicit 3D Gaussian Splatting (3DGS) to continuous
-      water volumes inevitably introduces a <strong>representation mismatch</strong>, causing severe
-      <strong>gradient entanglement</strong> during optimization. This forces the model to generate semi-transparent
-      floater artifacts to compensate for medium absorption.
-    </p>
-    <p style="margin-top:12px;">
-      To resolve this at the architectural level, we propose <strong>PureSeaGS</strong>, a physics-aware and
-      prior-driven decoupled underwater 3DGS framework. The core of our approach is the
-      <strong>Anisotropic Medium Field (AMF)</strong>, which utilizes separate prediction heads for distinct
-      physical quantities — medium color, spectral attenuation, and backscattering — achieving
-      <strong>feature-level decoupling</strong> that severs gradient interference between the continuous water
-      volume and discrete scene geometry during backpropagation. We further introduce a
-      <strong>depth-guided enhancement mechanism</strong> and a <strong>physics-regularized loss formulation</strong>
-      to stabilize optimization.
-    </p>
-    <p style="margin-top:12px;">
-      Extensive experiments demonstrate that PureSeaGS effectively suppresses floater artifacts and preserves
-      the underlying 3D geometric structure. Our method achieves state-of-the-art novel view synthesis performance,
-      reaching a <strong>PSNR of 32.40 dB</strong> on the Cura&ccedil;ao dataset — a significant margin of
-      <strong>0.83 dB</strong> over the best existing baseline — while fully maintaining the real-time rendering
-      efficiency of the native 3DGS rasterizer.
-    </p>
+          <h1 class="is-size-4 conference" style="margin-top: 14px;">
+            <span class="publication-venue" style="display: inline-block; padding: 4px 14px; border-radius: 20px; background: #f0f0f0; font-size: 0.85rem; font-weight: 600; color: #555;">Under Review</span>
+          </h1>
+
+          <div class="column has-text-centered">
+            <div class="publication-links">
+              <span class="link-block">
+                <a href="https://arxiv.org/abs/XXXX.XXXXX"
+                   class="external-link button is-normal is-rounded is-dark">
+                  <span class="icon"><i class="ai ai-arxiv"></i></span>
+                  <span>arXiv</span>
+                </a>
+              </span>
+              <span class="link-block">
+                <a href="https://github.com/puresea-gs/pureseags"
+                   class="external-link button is-normal is-rounded is-dark">
+                  <span class="icon"><i class="fab fa-github"></i></span>
+                  <span>Code</span>
+                </a>
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 </section>
 
-<!-- ===== Key Results: Novel View Synthesis ===== -->
-<section>
-  <div class="container">
-    <h2>Novel View Synthesis</h2>
-    <p style="color: var(--text-light);margin-bottom:16px;">
-      PureSeaGS renders underwater scenes with the medium present, outperforming existing methods in both
-      quantitative metrics and visual quality.
+<!-- ===== Teaser ===== -->
+<section class="hero teaser">
+  <div class="container is-max-desktop">
+    <div class="hero-body">
+      <img src="static/images/teaser.png"
+           class="full-width-image"
+           alt="PureSeaGS Pipeline Overview."/>
+      <h2 class="subtitle has-text-centered" style="margin-top: 16px;">
+        <span class="dmethod">PureSeaGS</span> learns an underwater scene representation that explicitly
+        decouples the continuous water medium from discrete 3D geometry via the Anisotropic Medium Field (AMF).
+      </h2>
+    </div>
+  </div>
+</section>
+
+<!-- ===== Abstract ===== -->
+<section class="section">
+  <div class="container is-max-desktop">
+    <div class="columns is-centered has-text-centered">
+      <div class="column is-four-fifths">
+        <h2 class="title is-3">Abstract</h2>
+        <div class="content has-text-justified">
+          <p>
+            Underwater 3D reconstruction inherently suffers from the physical conflict between continuous optical media
+            and existing discrete representation methods. Applying explicit 3D Gaussian Splatting (3DGS) to continuous
+            water volumes inevitably introduces a <strong>representation mismatch</strong>, causing severe
+            <strong>gradient entanglement</strong> during optimization. This forces the model to generate semi-transparent
+            floater artifacts to compensate for medium absorption.
+          </p>
+          <p>
+            To resolve this at the architectural level, we propose <strong>PureSeaGS</strong>, a physics-aware and
+            prior-driven decoupled underwater 3DGS framework. The core of our approach is the
+            <strong>Anisotropic Medium Field (AMF)</strong>, which utilizes separate prediction heads for distinct
+            physical quantities — medium color <i>C<sub>med</sub></i>, spectral attenuation
+            <i>&sigma;<sub>attn</sub></i>, and backscattering <i>&sigma;<sub>bs</sub></i> — achieving
+            <strong>feature-level decoupling</strong> that severs gradient interference between the continuous water
+            volume and discrete scene geometry during backpropagation. We further introduce a
+            <strong>depth-guided enhancement mechanism</strong> and a <strong>physics-regularized loss formulation</strong>
+            to stabilize optimization.
+          </p>
+          <p>
+            Extensive experiments demonstrate that PureSeaGS effectively suppresses floater artifacts and preserves
+            the underlying 3D geometric structure. Our method achieves state-of-the-art novel view synthesis performance,
+            reaching a <strong>PSNR of 32.40 dB</strong> on the Cura&ccedil;ao dataset — a significant margin of
+            <strong>+0.83 dB</strong> over the best existing baseline — while fully maintaining the real-time rendering
+            efficiency of the native 3DGS rasterizer.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== Method ===== -->
+<section class="section">
+  <div class="container is-max-desktop">
+    <h2 class="title is-3 has-text-centered">Method Overview</h2>
+    <div class="hero-body">
+      <img src="static/images/pipeline.png"
+           class="full-width-image"
+           alt="PureSeaGS Architecture Overview."/>
+    </div>
+    <div class="content has-text-centered" style="margin-top: 12px;">
+      <p>
+        <strong>PureSeaGS</strong> follows a decouple-then-couple strategy. The AMF first predicts
+        independent physical quantities via three separate heads, then the Coupled Volumetric Field renderer
+        integrates object radiance with medium scattering following the Jaffe-McGlamery underwater image
+        formation model.
+      </p>
+    </div>
+  </div>
+</section>
+
+<!-- ===== Results: Novel View Synthesis ===== -->
+<section class="section">
+  <div class="container is-max-desktop">
+    <h2 class="title is-4">Novel View Synthesis</h2>
+    <p>
+      <span class="dmethod">PureSeaGS</span> renders underwater scenes with superior quantitative performance
+      and visual quality compared to existing methods.
     </p>
-    <div class="results-grid">
-      <div class="result-card">
-        <img src="../.assets/pipeline.png" alt="NVS comparison" />
+    <div class="results-grid" style="margin-top: 24px;">
+      <div class="result-item">
+        <img src="static/images/pipeline.png" alt="Qualitative NVS comparison"/>
         <p class="caption">Qualitative comparison on Cura&ccedil;ao (top) and IUI3-RedSea (bottom).</p>
       </div>
-      <div class="result-card">
-        <img src="../.assets/pipeline.png" alt="Restored comparison" />
+      <div class="result-item">
+        <img src="static/images/pipeline.png" alt="Restored view comparison"/>
         <p class="caption">Water-free scene restoration with accurate color recovery.</p>
       </div>
     </div>
   </div>
 </section>
 
-<!-- ===== Key Results: Depth & Geometry ===== -->
-<section>
-  <div class="container">
-    <h2>Geometry &amp; Depth Preservation</h2>
-    <p style="color: var(--text-light);margin-bottom:16px;">
-      By decoupling the medium from geometry, PureSeaGS produces clean depth maps without floater artifacts
-      — a hallmark of gradient entanglement in prior methods.
+<!-- ===== Results: Depth & Geometry ===== -->
+<section class="section">
+  <div class="container is-max-desktop">
+    <h2 class="title is-4">Geometry &amp; Depth Preservation</h2>
+    <p>
+      By decoupling the medium from geometry, <span class="dmethod">PureSeaGS</span> produces clean depth maps
+      without floater artifacts — a hallmark of gradient entanglement in prior methods.
     </p>
-    <div class="teaser" style="margin-top:16px;">
-      <img src="../.assets/pipeline.png" alt="Depth comparison" style="max-width:100%;" />
-      <p class="caption">Depth map comparison across scenes. PureSeaGS preserves sharp depth discontinuities
-      while prior methods exhibit medium-induced blur and floaters.</p>
+    <div class="hero-body">
+      <img src="static/images/pipeline.png"
+           class="full-width-image"
+           alt="Depth comparison across methods."/>
+      <p class="caption has-text-centered" style="margin-top: 12px;">
+        Depth map comparison across scenes. PureSeaGS preserves sharp depth discontinuities
+        while prior methods exhibit medium-induced blur and floaters.
+      </p>
     </div>
   </div>
 </section>
 
 <!-- ===== BibTeX ===== -->
-<section>
-  <div class="container">
-    <h2>BibTeX</h2>
-    <div class="bibtex-box">
-      <button class="copy-btn" onclick="navigator.clipboard.writeText(this.parentElement.textContent.replace('Copy','').trim())">📋 Copy</button>
-@article{pureseags2025,
-  title   = {PureSeaGS: Decoupled Physics-Aware 3D Gaussian Splatting
-             for Underwater Scene Reconstruction},
-  author  = {LZF},
-  journal = {Under Review},
-  year    = {2025}
-}
-    </div>
+<section class="section" id="BibTeX">
+  <div class="container is-max-desktop content">
+    <h2 class="title">BibTeX</h2>
+    <pre><code>@article{pureseags2025,
+  title     = {PureSeaGS: Decoupled Physics-Aware 3D Gaussian Splatting
+               for Underwater Scene Reconstruction},
+  author    = {LZF},
+  journal   = {Under Review},
+  year      = {2025},
+}</code></pre>
   </div>
 </section>
 
 <!-- ===== Footer ===== -->
-<footer class="container">
-  <p>
-    Template based on the <a href="https://nerfies.github.io/">Nerfies</a> project page.
-    &copy; 2025
-  </p>
+<footer class="footer">
+  <div class="container">
+    <div class="columns is-centered">
+      <div class="column">
+        <div class="content has-text-centered">
+          <p>
+            Website template based on the project page for
+            <a href="https://dorverbin.github.io/nerf-casting/">NeRF-Casting</a>.
+            &copy; 2025
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
 </footer>
 
 </body>
