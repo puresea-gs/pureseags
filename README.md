@@ -22,7 +22,6 @@
 ## 📌 Release Plan
 
 - [ ] Training code
-- [ ] Pretrained models
 - [ ] Evaluation scripts
 
 ---
