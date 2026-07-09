@@ -1,148 +1,56 @@
-<p align="center">
-  <h1 align="center">
-    <span>PureSeaGS</span><br>
-    <span style="font-size: 1.2rem; font-weight: normal;">Decoupled Physics-Aware 3D Gaussian Splatting for Underwater Scene Reconstruction</span>
-  </h1>
-  <p align="center">
-    <a href="https://github.com/LZF">LZF</a>
-  </p>
-  <p align="center">
-    <b><i>Under Review</i></b>
-  </p>
-  <p align="center">
-    <a href="https://arxiv.org/abs/XXXX.XXXXX">📄 Paper</a> |
-    <a href="https://puresea-gs.github.io/">🌐 Project Page</a>
-  </p>
-</p>
-
-<br/>
+<h1 align="center">PureSeaGS</h1>
+<h3 align="center">Decoupled Physics-Aware 3D Gaussian Splatting<br>for Underwater Scene Reconstruction</h3>
 
 <p align="center">
-  <img alt="PureSeaGS Pipeline" src=".assets/pipeline.png" width="90%" />
+  <a href="https://arxiv.org/abs/XXXX.XXXXX"><strong>📄 Paper</strong></a> |
+  <a href="https://puresea-gs.github.io/pureseags/"><strong>🌐 Project Page</strong></a>
 </p>
 
-<p align="center" style="font-size: 1rem;">
-  <strong>PureSeaGS</strong> explicitly decouples the continuous underwater medium from discrete 3D geometry via the Anisotropic Medium Field (AMF), achieving artifact-free rendering and clean depth.
-</p>
-
-<br/>
-
-## 🔬 Abstract
-
-Underwater 3D reconstruction inherently suffers from the physical conflict between continuous optical media and existing discrete representation methods. Applying explicit 3D Gaussian Splatting (3DGS) to continuous water volumes inevitably introduces a **representation mismatch**, causing severe **gradient entanglement** that forces the model to generate semi-transparent floater artifacts.
-
-**PureSeaGS** resolves this at the architectural level with a physics-aware, prior-driven decoupled framework. The core innovation is the **Anisotropic Medium Field (AMF)** with separate prediction heads for distinct physical quantities:
-- **Medium color** `C_med`
-- **Spectral attenuation** `σ_attn`
-- **Effective backscattering** `σ_bs`
-
-This multi-head design achieves **feature-level decoupling** of physical parameters, effectively severing gradient interference between the continuous water volume and discrete scene geometry. We further introduce a **depth-guided enhancement mechanism** and a **physics-regularized loss formulation** to stabilize optimization.
-
-Our method achieves state-of-the-art novel view synthesis: **PSNR 32.40 dB** on Curaçao — **+0.83 dB** over the best baseline — while maintaining real-time 3DGS rendering.
-
-<br/>
-
-## 🏗️ Method
+<br>
 
 <p align="center">
-  <img alt="Architecture Overview" src=".assets/pipeline.png" width="95%" />
+  <img src=".assets/pipeline.png" width="100%" />
 </p>
 
-PureSeaGS follows a **decouple-then-couple** strategy:
+---
 
-1. **State Encoding** — SH-encoded ray directions capture view-dependent anisotropic scattering
-2. **Physics-Decoupled Medium MLP (AMF)** — Shared backbone → three independent prediction heads, eliminating gradient interference
-3. **Coupled Volumetric Field Rendering** — Physically integrates object radiance and medium scattering via Jaffe-McGlamery model
+## Abstract
+
+Underwater 3D reconstruction inherently suffers from the physical conflict between continuous optical media and existing discrete representation methods. Applying explicit 3D Gaussian Splatting (3DGS) to continuous water volumes inevitably introduces a **representation mismatch**. This compromise causes severe **gradient entanglement** during optimization, forcing the model to generate semi-transparent floater artifacts to compensate for medium absorption.
+
+To resolve this at the architectural level, we propose **PureSeaGS**, a physics-aware and prior-driven decoupled underwater 3DGS framework. The core of our approach is the **Anisotropic Medium Field (AMF)** with separate prediction heads for distinct physical quantities:
+
+| Physical quantity | Symbol | Description |
+|---|---|---|
+| Medium color | `C_med` | Base color of the water body (analogous to veiling light) |
+| Spectral attenuation | `σ_attn` | Wavelength-dependent decay of object radiance with distance |
+| Effective backscattering | `σ_bs` | Accumulation rate of ambient light scattered into the line-of-sight |
+
+Instead of merely modeling scattering directionality, the AMF achieves **feature-level decoupling** of physical parameters, effectively severing gradient interference between the continuous water volume and discrete scene geometry during backpropagation. We further introduce a **depth-guided enhancement mechanism** to condition medium predictions on scene geometry, and a **physics-regularized loss formulation** to stabilize optimization under severe underwater appearance variations.
+
+Extensive experiments demonstrate that PureSeaGS effectively suppresses semi-transparent floater artifacts and preserves the underlying 3D geometric structures. Our method achieves state-of-the-art novel view synthesis performance, reaching a **PSNR of 32.40 dB** on the Curaçao dataset — a significant margin of **0.83 dB** over the best existing baseline — while fully maintaining the real-time rendering efficiency of the native 3DGS rasterizer.
+
+## Method Overview
+
+PureSeaGS follows a **decouple-then-couple** strategy with four stages:
+
+1. **State Encoding** — SH-encoded ray directions capture view-dependent anisotropic scattering characteristics
+2. **Physics-Decoupled Medium MLP (AMF)** — Shared backbone routes into three independent prediction heads, eliminating gradient interference between physically distinct quantities
+3. **Coupled Volumetric Field Rendering** — Physically integrates object radiance and medium scattering via the Jaffe-McGlamery underwater image formation model
 4. **Joint Loss Constraints** — Regularized L1 + SSIM with adaptive structure penalty and depth-guided conditioning
 
-<br/>
+## Key Results
 
-## 📦 Installation
+- **Novel View Synthesis:** PSNR 32.40 dB on Curaçao (+0.83 dB over SOTA), real-time rendering maintained
+- **Floater Suppression:** Semi-transparent artifacts substantially eliminated via architectural decoupling
+- **Depth Preservation:** Clean depth maps with sharp geometric boundaries, unlike prior methods that sacrifice geometry to explain the medium
+- **Color Fidelity:** Accurate water-free scene restoration validated on DKC-Pro color chart
 
-Built on [Nerfstudio](https://docs.nerf.studio/) with custom CUDA kernels.
+## Code
 
-### Prerequisites
+Full source code will be released upon paper acceptance. Helper scripts for data preprocessing and evaluation are provided in this repository.
 
-```bash
-conda create --name pureseags -y python=3.8
-conda activate pureseags
-python -m pip install --upgrade pip
-```
-
-### Install PureSeaGS
-
-```bash
-# PyTorch (CUDA 11.8)
-pip uninstall torch torchvision functorch tinycudann
-pip install torch==2.1.2+cu118 torchvision==0.16.2+cu118 --extra-index-url https://download.pytorch.org/whl/cu118
-
-# CUDA toolkit
-conda install -c "nvidia/label/cuda-11.8.0" cuda-toolkit
-
-# tiny-cuda-nn
-pip install ninja git+https://github.com/NVlabs/tiny-cuda-nn/#subdirectory=bindings/torch
-
-# Nerfstudio
-pip install nerfstudio==1.1.4
-ns-install-cli
-
-# PureSeaGS
-git clone https://github.com/puresea-gs/pureseags.git
-cd pureseags
-git submodule init
-git submodule update --recursive
-pip install --no-use-pep517 -e .
-```
-
-<br/>
-
-## 📊 Data
-
-We use the [SeaThru-NeRF](https://sea-thru-nerf.github.io/) dataset (Curaçao, Panama, JapaneseGardens, IUI3-RedSea) and the Kaggle Underwater Benchmark (D3, D4, D5).
-
-Preprocess with COLMAP:
-
-```bash
-colmap image_undistorter \
-  --image_path /path/to/SeathruNeRF_dataset/IUI3-RedSea/images_wb \
-  --input_path /path/to/SeathruNeRF_dataset/IUI3-RedSea/colmap/sparse/0 \
-  --output_path /path/to/undistorted/IUI3-RedSea \
-  --output_type COLMAP
-```
-
-<br/>
-
-## 🚀 Training
-
-```bash
-ns-train pureseags --vis viewer+wandb colmap \
-  --downscale-factor 1 \
-  --colmap-path sparse \
-  --data /path/to/undistorted/IUI3-RedSea \
-  --images-path images
-```
-
-**Note:** Training/testing splits follow SeaThru-NeRF conventions (different from default nerfstudio splits).
-
-<br/>
-
-## 📈 Evaluation
-
-```bash
-# Evaluate on test set
-ns-eval --load-config outputs/pureseags/CONFIG.yml \
-  --render-output-path renders/eval
-
-# Render camera trajectory
-ns-render camera-path \
-  --load-config outputs/pureseags/CONFIG.yml \
-  --camera-path-filename /path/to/trajectory.json \
-  --output-path renders/video.mp4
-```
-
-<br/>
-
-## 📚 Citation
+## Citation
 
 ```bibtex
 @article{pureseags2025,
@@ -154,14 +62,10 @@ ns-render camera-path \
 }
 ```
 
-<br/>
+## Acknowledgements
 
-## 🙏 Acknowledgements
+This work builds upon [WaterSplatting](https://github.com/water-splatting/water-splatting) (3DV 2025), [Nerfstudio](https://docs.nerf.studio/), and [3D Gaussian Splatting](https://repo-sam.inria.fr/fungraph/3d-gaussian-splatting/). We thank the [SeaThru-NeRF](https://sea-thru-nerf.github.io/) authors for open-sourcing their dataset.
 
-This work builds upon [WaterSplatting](https://github.com/water-splatting/water-splatting) (3DV 2025), [Nerfstudio](https://docs.nerf.studio/), and [3D Gaussian Splatting](https://repo-sam.inria.fr/fungraph/3d-gaussian-splatting/). We thank the SeaThru-NeRF authors for their dataset.
-
-<br/>
-
-## 📄 License
+## License
 
 Apache License 2.0. See [LICENSE](LICENSE).
