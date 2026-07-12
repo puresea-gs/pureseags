@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PureSeaGS | 2×2 Comparison</title>
+
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+      background: #111; color: #eee;
+      padding: 20px;
+    }
+
+    h1 { text-align: center; font-size: 1.5rem; margin-bottom: 4px; }
+    .sub { text-align: center; color: #999; font-size: 0.85rem; margin-bottom: 16px; }
+
+    .grid-2x2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    @media (max-width: 800px) {
+      .grid-2x2 { grid-template-columns: 1fr; }
+    }
+
+    /* ===== Slider (compact) ===== */
+    .slider-wrap {
+      position: relative;
+      width: 100%;
+      border-radius: 8px;
+      overflow: hidden;
+      background: #000;
+      cursor: ew-resize;
+      user-select: none;
+      -webkit-user-select: none;
+      touch-action: none;
+    }
+    .slider-wrap .vid-base {
+      display: block;
+      width: 100%;
+    }
+
+    .slider-clip {
+      position: absolute;
+      top: 0; left: 0;
+      height: 100%;
+      overflow: hidden;
+      pointer-events: none;
+    }
+    .slider-clip video {
+      position: absolute;
+      top: 0; left: 0;
+      height: 100%;
+      display: block;
+    }
+
+    .slider-line {
+      position: absolute;
+      top: 0; bottom: 0;
+      width: 2px;
+      background: rgba(255,255,255,0.9);
+      pointer-events: none;
+      z-index: 2;
+    }
+    .slider-handle {
+      position: absolute;
+      top: 50%;
+      width: 32px; height: 32px;
+      margin-left: -16px; margin-top: -16px;
+      background: rgba(255,255,255,0.9);
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      pointer-events: none;
+      z-index: 3;
+      box-shadow: 0 1px 6px rgba(0,0,0,0.4);
+    }
+    .slider-handle svg { width: 14px; height: 14px; fill: #555; }
+
+    .slider-label {
+      position: absolute; top: 8px;
+      padding: 3px 8px;
+      font-size: 0.72rem; font-weight: 600;
+      color: #fff;
+      background: rgba(0,0,0,0.55);
+      border-radius: 4px;
+      pointer-events: none;
+      z-index: 4;
+    }
+    .slider-label.left  { left: 8px; }
+    .slider-label.right { right: 8px; }
+
+    .scene-name {
+      position: absolute; bottom: 8px; left: 50%;
+      transform: translateX(-50%);
+      padding: 2px 10px;
+      font-size: 0.75rem; font-weight: 600;
+      color: #fff;
+      background: rgba(0,0,0,0.55);
+      border-radius: 4px;
+      pointer-events: none;
+      z-index: 4;
+      white-space: nowrap;
+    }
+  </style>
+</head>
+<body>
+
+<h1>PureSeaGS — Novel View Synthesis</h1>
+<p class="sub">Drag the handle to compare WaterSplatting vs PureSeaGS (Ours) · Slow motion</p>
+
+<div class="grid-2x2">
+
+  <!-- Curasao -->
+  <div class="slider-wrap" id="s-curasao">
+    <video class="vid-base" id="v-curasao-ws" src="videos/curasao_ws_slow.mp4" muted loop playsinline></video>
+    <div class="slider-clip" id="clip-curasao">
+      <video id="v-curasao-ps" src="videos/curasao_ps_slow.mp4" muted loop playsinline></video>
+    </div>
+    <div class="slider-line" id="line-curasao"></div>
+    <div class="slider-handle" id="handle-curasao">
+      <svg viewBox="0 0 24 24"><path d="M8 4l8 8-8 8z"/><path d="M16 4l-8 8 8 8z"/></svg>
+    </div>
+    <div class="slider-label left">PureSeaGS</div>
+    <div class="slider-label right">WaterSplatting</div>
+    <div class="scene-name">Cura&ccedil;ao</div>
+  </div>
+
+  <!-- Panama -->
+  <div class="slider-wrap" id="s-panama">
+    <video class="vid-base" id="v-panama-ws" src="videos/panama_ws_slow.mp4" muted loop playsinline></video>
+    <div class="slider-clip" id="clip-panama">
+      <video id="v-panama-ps" src="videos/panama_ps_slow.mp4" muted loop playsinline></video>
+    </div>
+    <div class="slider-line" id="line-panama"></div>
+    <div class="slider-handle" id="handle-panama">
+      <svg viewBox="0 0 24 24"><path d="M8 4l8 8-8 8z"/><path d="M16 4l-8 8 8 8z"/></svg>
+    </div>
+    <div class="slider-label left">PureSeaGS</div>
+    <div class="slider-label right">WaterSplatting</div>
+    <div class="scene-name">Panama</div>
+  </div>
+
+  <!-- IUI3 -->
+  <div class="slider-wrap" id="s-iui3">
+    <video class="vid-base" id="v-iui3-ws" src="videos/iui3_ws_slow.mp4" muted loop playsinline></video>
+    <div class="slider-clip" id="clip-iui3">
+      <video id="v-iui3-ps" src="videos/iui3_ps_slow.mp4" muted loop playsinline></video>
+    </div>
+    <div class="slider-line" id="line-iui3"></div>
+    <div class="slider-handle" id="handle-iui3">
+      <svg viewBox="0 0 24 24"><path d="M8 4l8 8-8 8z"/><path d="M16 4l-8 8 8 8z"/></svg>
+    </div>
+    <div class="slider-label left">PureSeaGS</div>
+    <div class="slider-label right">WaterSplatting</div>
+    <div class="scene-name">IUI3-RedSea</div>
+  </div>
+
+  <!-- Japanese -->
+  <div class="slider-wrap" id="s-japanese">
+    <video class="vid-base" id="v-japanese-ws" src="videos/japanese_ws_slow.mp4" muted loop playsinline></video>
+    <div class="slider-clip" id="clip-japanese">
+      <video id="v-japanese-ps" src="videos/japanese_ps_slow.mp4" muted loop playsinline></video>
+    </div>
+    <div class="slider-line" id="line-japanese"></div>
+    <div class="slider-handle" id="handle-japanese">
+      <svg viewBox="0 0 24 24"><path d="M8 4l8 8-8 8z"/><path d="M16 4l-8 8 8 8z"/></svg>
+    </div>
+    <div class="slider-label left">PureSeaGS</div>
+    <div class="slider-label right">WaterSplatting</div>
+    <div class="scene-name">Japanese Gardens</div>
+  </div>
+
+</div>
+
+<script>
+(function() {
+  var scenes = ['curasao', 'panama', 'iui3', 'japanese'];
+
+  scenes.forEach(function(scene) {
+    var wrap   = document.getElementById('s-' + scene);
+    var wsVid  = document.getElementById('v-' + scene + '-ws');
+    var psVid  = document.getElementById('v-' + scene + '-ps');
+    var clip   = document.getElementById('clip-' + scene);
+    var line   = document.getElementById('line-' + scene);
+    var handle = document.getElementById('handle-' + scene);
+
+    if (!wrap || !wsVid || !psVid) return;
+
+    var fraction = 0.5;
+    var dragging = false;
+    var syncing = false;
+
+    function updateClip() {
+      var w = wrap.offsetWidth;
+      psVid.style.width = w + 'px';
+      clip.style.width = (fraction * 100) + '%';
+      clip.style.clipPath = 'none';
+      line.style.left = (fraction * 100) + '%';
+      handle.style.left = (fraction * 100) + '%';
+    }
+    updateClip();
+    window.addEventListener('resize', updateClip);
+
+    // Sync: WS master → PS slave
+    function syncPS() {
+      if (syncing) return;
+      syncing = true;
+      psVid.currentTime = wsVid.currentTime;
+      syncing = false;
+    }
+    wsVid.addEventListener('seeked', syncPS);
+    wsVid.addEventListener('play',  function() { syncPS(); psVid.play(); });
+    wsVid.addEventListener('pause', function() { psVid.pause(); });
+
+    // Drag
+    function toFraction(e) {
+      var rect = wrap.getBoundingClientRect();
+      var x = e.touches ? e.touches[0].clientX : e.clientX;
+      return Math.max(0.02, Math.min(0.98, (x - rect.left) / rect.width));
+    }
+
+    wrap.addEventListener('pointerdown', function(e) {
+      dragging = true;
+      wrap.setPointerCapture(e.pointerId);
+      fraction = toFraction(e);
+      updateClip();
+      wsVid.pause();
+      psVid.pause();
+    });
+    wrap.addEventListener('pointermove', function(e) {
+      if (!dragging) return;
+      fraction = toFraction(e);
+      updateClip();
+    });
+    function stopDrag(e) {
+      if (!dragging) return;
+      dragging = false;
+      wrap.releasePointerCapture(e.pointerId);
+      psVid.currentTime = wsVid.currentTime;
+      wsVid.play();
+      psVid.play();
+    }
+    wrap.addEventListener('pointerup', stopDrag);
+    wrap.addEventListener('pointerleave', stopDrag);
+
+    // Start
+    wsVid.loop = true;
+    psVid.loop = true;
+    wsVid.play().catch(function() {});
+    psVid.play().catch(function() {});
+  });
+})();
+</script>
+
+</body>
+</html>
