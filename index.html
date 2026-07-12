@@ -11,7 +11,7 @@
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
     :root {
-      --bg: #ffffff; --text: #333333; --text-light: #666666;
+      --bg: #ffffff; --text: #333333; --text-muted: #666666;
       --accent: #2563eb; --accent-hover: #1d4ed8;
       --border: #e5e7eb; --code-bg: #f8fafc;
       --max-width: 1100px;
@@ -23,19 +23,17 @@
       line-height: 1.6; -webkit-font-smoothing: antialiased;
     }
 
-    /* === Layout === */
     .container { max-width: var(--max-width); margin: 0 auto; padding: 0 24px; }
 
     /* === Header === */
-    header { padding: 60px 0 20px; text-align: center; }
-    header h1 { font-size: 2.2rem; font-weight: 700; color: #111; letter-spacing: -0.5px; }
-    header .subtitle { font-size: 1.1rem; color: var(--text-light); margin-top: 8px; font-weight: 400; }
-    header .authors { font-size: 1.05rem; margin-top: 16px; color: #444; }
-    header .affiliation { font-size: 0.9rem; color: var(--text-light); margin-top: 4px; }
-    header .venue { display: inline-block; margin-top: 14px; padding: 4px 14px; border-radius: 20px;
-      background: #f0f0f0; font-size: 0.85rem; font-weight: 600; color: #555; }
+    header { padding: 64px 0 24px; text-align: center; }
+    header h1 { font-size: 2.4rem; font-weight: 700; color: #111; letter-spacing: -0.5px; }
+    header .subtitle { font-size: 1.15rem; color: var(--text-muted); margin-top: 10px; font-weight: 400; }
+    header .authors { font-size: 1.05rem; margin-top: 18px; color: #444; }
+    header .affiliation { font-size: 0.9rem; color: var(--text-muted); margin-top: 4px; }
+    header .venue { display: inline-block; margin-top: 14px; padding: 5px 16px; border-radius: 20px;
+      background: #f3f4f6; font-size: 0.85rem; font-weight: 600; color: #555; }
 
-    /* === Buttons === */
     .btn-row { display: flex; justify-content: center; gap: 12px; margin-top: 24px; flex-wrap: wrap; }
     .btn {
       display: inline-flex; align-items: center; gap: 6px;
@@ -44,30 +42,114 @@
       border: 1.5px solid var(--border); color: #333; background: #fff;
     }
     .btn:hover { border-color: #bbb; background: #f9fafb; }
-    .btn.primary { background: var(--accent); color: #fff; border-color: var(--accent); }
-    .btn.primary:hover { background: var(--accent-hover); border-color: var(--accent-hover); }
+    .btn.primary { background: #111; color: #fff; border-color: #111; }
+    .btn.primary:hover { background: #333; border-color: #333; }
 
     /* === Teaser === */
     .teaser { margin: 40px auto; text-align: center; }
-    .teaser img, .teaser video { max-width: 100%; border-radius: 12px; box-shadow: 0 2px 12px rgba(0,0,0,0.08); }
+    .teaser img { max-width: 100%; border-radius: 12px; box-shadow: 0 2px 12px rgba(0,0,0,0.06); }
 
     /* === Sections === */
-    section { padding: 40px 0; border-top: 1px solid var(--border); }
-    section h2 { font-size: 1.5rem; font-weight: 700; margin-bottom: 16px; color: #111; }
-    section h3 { font-size: 1.15rem; font-weight: 600; margin: 28px 0 12px; color: #222; }
+    section { padding: 48px 0; border-top: 1px solid var(--border); }
+    section h2 { font-size: 1.6rem; font-weight: 700; margin-bottom: 6px; color: #111; }
+    section .section-subtitle { font-size: 0.95rem; color: var(--text-muted); margin-bottom: 24px; }
+    section h3 { font-size: 1.1rem; font-weight: 600; margin: 32px 0 12px; color: #222; }
 
     /* === Abstract === */
     .abstract p { font-size: 1.02rem; color: #444; text-align: justify; }
 
-    /* === Video Grid === */
-    .video-card { margin-bottom: 28px; }
-    .video-card .scene-label { font-size: 1.05rem; font-weight: 600; color: #333; margin-bottom: 8px; }
-    .video-card video { width: 100%; border-radius: 10px; box-shadow: 0 1px 8px rgba(0,0,0,0.06); }
-    .video-card .caption { font-size: 0.88rem; color: var(--text-light); margin-top: 6px; }
+    /* ============================================= */
+    /* === VIDEO COMPARISON SLIDER ================= */
+    /* ============================================= */
+    .comparison-section { margin-bottom: 24px; }
+    .comparison-section .scene-title {
+      font-size: 1.1rem; font-weight: 600; color: #222; margin-bottom: 10px;
+    }
+
+    .slider-container {
+      position: relative;
+      width: 100%;
+      overflow: hidden;
+      border-radius: 10px;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+      background: #000;
+      cursor: ew-resize;
+      user-select: none;
+      -webkit-user-select: none;
+      /* Maintain aspect ratio based on the video's intrinsic size */
+    }
+
+    .slider-video-wrapper {
+      position: relative;
+      width: 100%;
+    }
+
+    .slider-video-wrapper video {
+      display: block;
+      width: 100%;
+      height: auto;
+    }
+
+    /* The "after" (PureSeaGS) overlay — clipped to show only left portion */
+    .slider-overlay {
+      position: absolute;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      overflow: hidden;
+    }
+    .slider-overlay video {
+      position: absolute;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      object-fit: cover;
+    }
+
+    /* The vertical slider line */
+    .slider-line {
+      position: absolute;
+      top: 0; bottom: 0;
+      width: 3px;
+      background: rgba(255,255,255,0.9);
+      pointer-events: none;
+      box-shadow: 0 0 6px rgba(0,0,0,0.3);
+      z-index: 2;
+    }
+
+    /* The drag handle */
+    .slider-handle {
+      position: absolute;
+      top: 50%;
+      width: 44px; height: 44px;
+      margin-left: -22px; margin-top: -22px;
+      background: rgba(255,255,255,0.95);
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      pointer-events: none;
+      z-index: 3;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.25);
+    }
+    .slider-handle svg { width: 20px; height: 20px; fill: #444; }
+
+    /* Labels on the video */
+    .slider-label {
+      position: absolute; top: 12px;
+      padding: 5px 12px;
+      font-size: 0.82rem; font-weight: 600;
+      color: #fff;
+      background: rgba(0,0,0,0.55);
+      border-radius: 6px;
+      pointer-events: none;
+      z-index: 4;
+      backdrop-filter: blur(4px);
+    }
+    .slider-label.left  { left: 12px; }
+    .slider-label.right { right: 12px; }
+
+    /* ============================================= */
 
     /* === BibTeX === */
     .bibtex-box { position: relative; background: var(--code-bg); border: 1px solid var(--border);
-      border-radius: 10px; padding: 20px 24px; font-family: 'SF Mono', 'Fira Code', monospace;
+      border-radius: 10px; padding: 20px 24px; font-family: 'SF Mono', 'Fira Code', 'Cascadia Code', monospace;
       font-size: 0.85rem; overflow-x: auto; white-space: pre-wrap; word-break: break-all; }
     .copy-btn { position: absolute; top: 10px; right: 12px; padding: 4px 12px;
       font-size: 0.8rem; background: #e5e7eb; border: none; border-radius: 6px; cursor: pointer; }
@@ -81,6 +163,8 @@
     @media (max-width: 640px) {
       header h1 { font-size: 1.6rem; }
       .btn { padding: 8px 16px; font-size: 0.85rem; }
+      .slider-handle { width: 36px; height: 36px; margin-left: -18px; margin-top: -18px; }
+      .slider-handle svg { width: 16px; height: 16px; }
     }
   </style>
 </head>
@@ -90,9 +174,7 @@
 <header class="container">
   <h1>PureSeaGS</h1>
   <p class="subtitle">Decoupled Physics-Aware 3D Gaussian Splatting for Underwater Scene Reconstruction</p>
-  <p class="authors">
-    <strong>LZF</strong>
-  </p>
+  <p class="authors"><strong>LZF</strong></p>
   <p class="affiliation">School of Information Science and Technology</p>
   <span class="venue">Under Review</span>
 
@@ -103,12 +185,12 @@
   </div>
 </header>
 
-<!-- ===== Teaser Figure ===== -->
+<!-- ===== Teaser ===== -->
 <div class="teaser container">
-  <img src="../.assets/pipeline.png" alt="PureSeaGS Pipeline Overview" />
-  <p style="color: #888;font-size: 0.9rem;margin-top: 8px;">
+  <img src="../.assets/pipeline.png" alt="PureSeaGS Pipeline" />
+  <p style="color: #888; font-size: 0.9rem; margin-top: 10px;">
     <strong>PureSeaGS pipeline:</strong> The Anisotropic Medium Field (AMF) decouples water medium properties
-    from scene geometry, eliminating gradient entanglement during backpropagation.
+    from scene geometry, eliminating gradient entanglement.
   </p>
 </div>
 
@@ -143,85 +225,89 @@
   </div>
 </section>
 
-<!-- ===== Novel View Synthesis Comparisons ===== -->
+<!-- ===== Novel View Synthesis — Interactive Slider ===== -->
 <section>
   <div class="container">
     <h2>Novel View Synthesis</h2>
-    <p style="color: var(--text-light);margin-bottom:16px;">
-      Side-by-side comparisons of interpolated camera trajectories across four underwater scenes.
-      <strong>Left:</strong> WaterSplatting (baseline). <strong>Right:</strong> PureSeaGS (ours).
+    <p class="section-subtitle">
+      <strong>Drag the slider</strong> to compare WaterSplatting (left) with PureSeaGS (right).
       PureSeaGS produces cleaner geometry with fewer floater artifacts.
     </p>
 
     <!-- Curasao -->
-    <div class="video-card">
-      <div class="scene-label">Cura&ccedil;ao</div>
-      <video autoplay loop muted playsinline controls>
-        <source src="videos/curasao_compare.mp4" type="video/mp4">
-      </video>
+    <div class="comparison-section">
+      <div class="scene-title">Cura&ccedil;ao</div>
+      <div class="slider-container" id="slider-curasao">
+        <div class="slider-video-wrapper">
+          <video id="v-curasao-ws" src="videos/curasao_ws.mp4" muted loop playsinline></video>
+          <div class="slider-overlay" id="clip-curasao">
+            <video id="v-curasao-ps" src="videos/curasao_ps.mp4" muted loop playsinline></video>
+          </div>
+          <div class="slider-line" id="line-curasao"></div>
+          <div class="slider-handle" id="handle-curasao">
+            <svg viewBox="0 0 24 24"><path d="M8 5l8 7-8 7V5z"/><path d="M16 5l-8 7 8 7V5z"/></svg>
+          </div>
+          <div class="slider-label left">WaterSplatting</div>
+          <div class="slider-label right">PureSeaGS (Ours)</div>
+        </div>
+      </div>
     </div>
 
     <!-- Panama -->
-    <div class="video-card">
-      <div class="scene-label">Panama</div>
-      <video autoplay loop muted playsinline controls>
-        <source src="videos/panama_compare.mp4" type="video/mp4">
-      </video>
+    <div class="comparison-section">
+      <div class="scene-title">Panama</div>
+      <div class="slider-container" id="slider-panama">
+        <div class="slider-video-wrapper">
+          <video id="v-panama-ws" src="videos/panama_ws.mp4" muted loop playsinline></video>
+          <div class="slider-overlay" id="clip-panama">
+            <video id="v-panama-ps" src="videos/panama_ps.mp4" muted loop playsinline></video>
+          </div>
+          <div class="slider-line" id="line-panama"></div>
+          <div class="slider-handle" id="handle-panama">
+            <svg viewBox="0 0 24 24"><path d="M8 5l8 7-8 7V5z"/><path d="M16 5l-8 7 8 7V5z"/></svg>
+          </div>
+          <div class="slider-label left">WaterSplatting</div>
+          <div class="slider-label right">PureSeaGS (Ours)</div>
+        </div>
+      </div>
     </div>
 
     <!-- IUI3-RedSea -->
-    <div class="video-card">
-      <div class="scene-label">IUI3-RedSea</div>
-      <video autoplay loop muted playsinline controls>
-        <source src="videos/iui3_compare.mp4" type="video/mp4">
-      </video>
+    <div class="comparison-section">
+      <div class="scene-title">IUI3-RedSea</div>
+      <div class="slider-container" id="slider-iui3">
+        <div class="slider-video-wrapper">
+          <video id="v-iui3-ws" src="videos/iui3_ws.mp4" muted loop playsinline></video>
+          <div class="slider-overlay" id="clip-iui3">
+            <video id="v-iui3-ps" src="videos/iui3_ps.mp4" muted loop playsinline></video>
+          </div>
+          <div class="slider-line" id="line-iui3"></div>
+          <div class="slider-handle" id="handle-iui3">
+            <svg viewBox="0 0 24 24"><path d="M8 5l8 7-8 7V5z"/><path d="M16 5l-8 7 8 7V5z"/></svg>
+          </div>
+          <div class="slider-label left">WaterSplatting</div>
+          <div class="slider-label right">PureSeaGS (Ours)</div>
+        </div>
+      </div>
     </div>
 
     <!-- Japanese Gardens -->
-    <div class="video-card">
-      <div class="scene-label">Japanese Gardens &mdash; RedSea</div>
-      <video autoplay loop muted playsinline controls>
-        <source src="videos/japanese_compare.mp4" type="video/mp4">
-      </video>
-    </div>
-  </div>
-</section>
-
-<!-- ===== Medium Removal ===== -->
-<section>
-  <div class="container">
-    <h2>Water-Free Scene Restoration</h2>
-    <p style="color: var(--text-light);margin-bottom:16px;">
-      PureSeaGS can remove the underwater medium to recover the clean scene appearance (去水).
-      <strong>Left:</strong> WaterSplatting. <strong>Right:</strong> PureSeaGS (ours).
-    </p>
-
-    <div class="video-card">
-      <div class="scene-label">Cura&ccedil;ao</div>
-      <video autoplay loop muted playsinline controls>
-        <source src="videos/curasao_compare_clear.mp4" type="video/mp4">
-      </video>
-    </div>
-
-    <div class="video-card">
-      <div class="scene-label">Panama</div>
-      <video autoplay loop muted playsinline controls>
-        <source src="videos/panama_compare_clear.mp4" type="video/mp4">
-      </video>
-    </div>
-
-    <div class="video-card">
-      <div class="scene-label">IUI3-RedSea</div>
-      <video autoplay loop muted playsinline controls>
-        <source src="videos/iui3_compare_clear.mp4" type="video/mp4">
-      </video>
-    </div>
-
-    <div class="video-card">
-      <div class="scene-label">Japanese Gardens &mdash; RedSea</div>
-      <video autoplay loop muted playsinline controls>
-        <source src="videos/japanese_compare_clear.mp4" type="video/mp4">
-      </video>
+    <div class="comparison-section">
+      <div class="scene-title">Japanese Gardens — RedSea</div>
+      <div class="slider-container" id="slider-japanese">
+        <div class="slider-video-wrapper">
+          <video id="v-japanese-ws" src="videos/japanese_ws.mp4" muted loop playsinline></video>
+          <div class="slider-overlay" id="clip-japanese">
+            <video id="v-japanese-ps" src="videos/japanese_ps.mp4" muted loop playsinline></video>
+          </div>
+          <div class="slider-line" id="line-japanese"></div>
+          <div class="slider-handle" id="handle-japanese">
+            <svg viewBox="0 0 24 24"><path d="M8 5l8 7-8 7V5z"/><path d="M16 5l-8 7 8 7V5z"/></svg>
+          </div>
+          <div class="slider-label left">WaterSplatting</div>
+          <div class="slider-label right">PureSeaGS (Ours)</div>
+        </div>
+      </div>
     </div>
   </div>
 </section>
@@ -243,13 +329,101 @@
   </div>
 </section>
 
-<!-- ===== Footer ===== -->
 <footer class="container">
   <p>
-    Template based on the <a href="https://nerfies.github.io/">Nerfies</a> project page.
+    Template based on <a href="https://nerfies.github.io/">Nerfies</a>.
     &copy; 2025
   </p>
 </footer>
+
+<!-- ============================================= -->
+<!-- === SLIDER LOGIC ============================ -->
+<!-- ============================================= -->
+<script>
+(function() {
+  // --- Sync all WS/PS video pairs ---
+  const scenes = ['curasao', 'panama', 'iui3', 'japanese'];
+
+  const sliders = {};
+
+  scenes.forEach(scene => {
+    const container = document.getElementById('slider-' + scene);
+    const wsVid = document.getElementById('v-' + scene + '-ws');
+    const psVid = document.getElementById('v-' + scene + '-ps');
+    const clip   = document.getElementById('clip-' + scene);
+    const line   = document.getElementById('line-' + scene);
+    const handle = document.getElementById('handle-' + scene);
+
+    if (!container || !wsVid || !psVid) return;
+
+    // State
+    let fraction = 0.5; // 0 = all WS, 1 = all PS
+
+    function updateClip() {
+      const pct = fraction * 100;
+      clip.style.width = pct + '%';
+      line.style.left = pct + '%';
+      handle.style.left = pct + '%';
+    }
+
+    // Initialize at 50/50
+    updateClip();
+
+    // --- Video sync ---
+    // Play both together
+    wsVid.addEventListener('play', () => { psVid.currentTime = wsVid.currentTime; psVid.play(); });
+    psVid.addEventListener('play', () => { wsVid.currentTime = psVid.currentTime; wsVid.play(); });
+    wsVid.addEventListener('pause', () => psVid.pause());
+    psVid.addEventListener('pause', () => wsVid.pause());
+    wsVid.addEventListener('seeked', () => { psVid.currentTime = wsVid.currentTime; });
+    psVid.addEventListener('seeked', () => { wsVid.currentTime = psVid.currentTime; });
+
+    // --- Pointer events ---
+    let dragging = false;
+
+    function setFractionFromEvent(e) {
+      const rect = container.getBoundingClientRect();
+      const x = (e.touches ? e.touches[0].clientX : e.clientX);
+      fraction = Math.max(0.02, Math.min(0.98, (x - rect.left) / rect.width));
+      updateClip();
+    }
+
+    container.addEventListener('pointerdown', (e) => {
+      dragging = true;
+      container.setPointerCapture(e.pointerId);
+      setFractionFromEvent(e);
+      // Pause while dragging for precise comparison
+      wsVid.pause();
+      psVid.pause();
+    });
+
+    container.addEventListener('pointermove', (e) => {
+      if (!dragging) return;
+      setFractionFromEvent(e);
+    });
+
+    container.addEventListener('pointerup', (e) => {
+      if (!dragging) return;
+      dragging = false;
+      container.releasePointerCapture(e.pointerId);
+      // Resume playback
+      wsVid.play();
+      psVid.play();
+    });
+
+    container.addEventListener('pointerleave', () => {
+      dragging = false;
+    });
+
+    // Start playing
+    wsVid.play().catch(() => {});
+    psVid.play().catch(() => {});
+
+    sliders[scene] = { fraction, updateClip };
+  });
+
+})();
+</script>
 
 </body>
 </html>
