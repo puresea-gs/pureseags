@@ -1,0 +1,3 @@
+[submodule "pureseags/cuda/csrc/third_party/glm"]
+	path = pureseags/cuda/csrc/third_party/glm
+	url = https://github.com/g-truc/glm.git
