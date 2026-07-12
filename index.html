@@ -341,22 +341,17 @@
     }
     updateClip();
 
-    // --- Sync: both videos play/pause/seek together ---
-    function syncBoth() {
+    // --- Sync: WS is master, PS is slave (one-way, no feedback loop) ---
+    let syncing = false;
+    function syncPS() {
+      if (syncing) return;
+      syncing = true;
       psVid.currentTime = wsVid.currentTime;
-      psVid.play();
+      syncing = false;
     }
-    wsVid.addEventListener('play',  syncBoth);
+    wsVid.addEventListener('seeked', syncPS);
+    wsVid.addEventListener('play',  function() { syncPS(); psVid.play(); });
     wsVid.addEventListener('pause', function() { psVid.pause(); });
-    wsVid.addEventListener('seeked', function() { psVid.currentTime = wsVid.currentTime; });
-
-    // Also sync when PS loops (so WS catches up)
-    psVid.addEventListener('play', function() {
-      if (!dragging) { wsVid.currentTime = psVid.currentTime; wsVid.play(); }
-    });
-    psVid.addEventListener('seeked', function() {
-      if (!dragging) { wsVid.currentTime = psVid.currentTime; }
-    });
 
     // --- Pointer / touch drag ---
     function pointerToFraction(e) {
