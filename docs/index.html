@@ -83,18 +83,21 @@
       height: auto;
     }
 
-    /* Top overlay: clips the PS video from the right */
+    /* Top overlay: clips the PS video with overflow:hidden */
     .slider-clip {
       position: absolute;
       top: 0; left: 0;
-      width: 100%; height: 100%;
+      height: 100%;
+      overflow: hidden;
       pointer-events: none;
+      /* width set by JS */
     }
     .slider-clip video {
-      display: block;
-      width: 100%;
+      position: absolute;
+      top: 0; left: 0;
       height: 100%;
-      object-fit: cover;
+      display: block;
+      /* width set by JS in pixels to match container */
     }
 
     /* Vertical line */
@@ -329,17 +332,19 @@
     let fraction = 0.5; // 0 = all WS (PS hidden), 1 = all PS (WS hidden)
     let dragging = false;
 
-    // Clip from LEFT: PS overlay is revealed from the left edge
-    // fraction=0 → clip left 100% → PS fully hidden → all WS
-    // fraction=0.5 → clip left 50% → left=WS, right=PS
-    // fraction=1 → clip left 0% → PS fully visible → all PS
+    // Left edge of PS overlay = slider position
+    // fraction=0 → overlay width 0% → all WS
+    // fraction=1 → overlay width 100% → all PS
     function updateClip() {
-      const pct = (1 - fraction) * 100;
-      clip.style.clipPath = 'inset(0 0 0 ' + pct + '%)';
+      var w = wrap.offsetWidth;
+      psVid.style.width = w + 'px';
+      clip.style.width = (fraction * 100) + '%';
+      clip.style.clipPath = 'none';
       line.style.left = (fraction * 100) + '%';
       handle.style.left = (fraction * 100) + '%';
     }
     updateClip();
+    window.addEventListener('resize', updateClip);
 
     // --- Sync: WS is master, PS is slave (one-way, no feedback loop) ---
     let syncing = false;
