@@ -297,6 +297,80 @@
   </div>
 </section>
 
+<!-- ===== Water-Free Restoration 2×2 Grid ===== -->
+<section>
+  <div class="container">
+    <h2>Water-Free Scene Restoration</h2>
+    <p class="section-subtitle">
+      Medium-removed renderings (去水). <strong>Drag the handle ⟷</strong> to compare.
+    </p>
+
+    <div class="grid-2x2">
+
+      <!-- Curasao Clear -->
+      <div class="slider-wrap" id="s-curasao-clear">
+        <video class="vid-base" id="v-curasao-clear-ws" src="videos/curasao_ws_clear_slow.mp4" muted loop playsinline></video>
+        <div class="slider-clip" id="clip-curasao-clear">
+          <video id="v-curasao-clear-ps" src="videos/curasao_ps_clear_slow.mp4" muted loop playsinline></video>
+        </div>
+        <div class="slider-line" id="line-curasao-clear"></div>
+        <div class="slider-handle" id="handle-curasao-clear">
+          <svg viewBox="0 0 24 24"><path d="M8 4l8 8-8 8z"/><path d="M16 4l-8 8 8 8z"/></svg>
+        </div>
+        <div class="slider-label left">PureSeaGS (Ours)</div>
+        <div class="slider-label right">WaterSplatting</div>
+        <div class="scene-name">Cura&ccedil;ao</div>
+      </div>
+
+      <!-- Panama Clear -->
+      <div class="slider-wrap" id="s-panama-clear">
+        <video class="vid-base" id="v-panama-clear-ws" src="videos/panama_ws_clear_slow.mp4" muted loop playsinline></video>
+        <div class="slider-clip" id="clip-panama-clear">
+          <video id="v-panama-clear-ps" src="videos/panama_ps_clear_slow.mp4" muted loop playsinline></video>
+        </div>
+        <div class="slider-line" id="line-panama-clear"></div>
+        <div class="slider-handle" id="handle-panama-clear">
+          <svg viewBox="0 0 24 24"><path d="M8 4l8 8-8 8z"/><path d="M16 4l-8 8 8 8z"/></svg>
+        </div>
+        <div class="slider-label left">PureSeaGS (Ours)</div>
+        <div class="slider-label right">WaterSplatting</div>
+        <div class="scene-name">Panama</div>
+      </div>
+
+      <!-- IUI3 Clear -->
+      <div class="slider-wrap" id="s-iui3-clear">
+        <video class="vid-base" id="v-iui3-clear-ws" src="videos/iui3_ws_clear_slow.mp4" muted loop playsinline></video>
+        <div class="slider-clip" id="clip-iui3-clear">
+          <video id="v-iui3-clear-ps" src="videos/iui3_ps_clear_slow.mp4" muted loop playsinline></video>
+        </div>
+        <div class="slider-line" id="line-iui3-clear"></div>
+        <div class="slider-handle" id="handle-iui3-clear">
+          <svg viewBox="0 0 24 24"><path d="M8 4l8 8-8 8z"/><path d="M16 4l-8 8 8 8z"/></svg>
+        </div>
+        <div class="slider-label left">PureSeaGS (Ours)</div>
+        <div class="slider-label right">WaterSplatting</div>
+        <div class="scene-name">IUI3-RedSea</div>
+      </div>
+
+      <!-- Japanese Clear -->
+      <div class="slider-wrap" id="s-japanese-clear">
+        <video class="vid-base" id="v-japanese-clear-ws" src="videos/japanese_ws_clear_slow.mp4" muted loop playsinline></video>
+        <div class="slider-clip" id="clip-japanese-clear">
+          <video id="v-japanese-clear-ps" src="videos/japanese_ps_clear_slow.mp4" muted loop playsinline></video>
+        </div>
+        <div class="slider-line" id="line-japanese-clear"></div>
+        <div class="slider-handle" id="handle-japanese-clear">
+          <svg viewBox="0 0 24 24"><path d="M8 4l8 8-8 8z"/><path d="M16 4l-8 8 8 8z"/></svg>
+        </div>
+        <div class="slider-label left">PureSeaGS (Ours)</div>
+        <div class="slider-label right">WaterSplatting</div>
+        <div class="scene-name">Japanese Gardens</div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
 <!-- ===== BibTeX ===== -->
 <section>
   <div class="container">
@@ -320,7 +394,8 @@
 
 <script>
 (function() {
-  const scenes = ['curasao', 'panama', 'iui3', 'japanese'];
+  const scenes = ['curasao', 'panama', 'iui3', 'japanese',
+                   'curasao-clear', 'panama-clear', 'iui3-clear', 'japanese-clear'];
 
   scenes.forEach(scene => {
     const wrap   = document.getElementById('s-' + scene);
