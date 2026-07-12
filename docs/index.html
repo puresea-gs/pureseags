@@ -424,16 +424,19 @@
     updateClip();
     window.addEventListener('resize', updateClip);
 
-    // --- Sync: WS is master, PS is slave (one-way, no feedback loop) ---
-    let syncing = false;
-    function syncPS() {
-      if (syncing) return;
-      syncing = true;
-      psVid.currentTime = wsVid.currentTime;
-      syncing = false;
+    // --- Sync: rAF continuous sync (WS master → PS slave), drift-proof ---
+    function syncLoop() {
+      if (!dragging && wsVid && !wsVid.paused) {
+        if (Math.abs(psVid.currentTime - wsVid.currentTime) > 0.04) {
+          psVid.currentTime = wsVid.currentTime;
+        }
+      }
+      requestAnimationFrame(syncLoop);
     }
-    wsVid.addEventListener('seeked', syncPS);
-    wsVid.addEventListener('play',  function() { syncPS(); psVid.play(); });
+    syncLoop();
+
+    // Event-based sync for play/pause coordination
+    wsVid.addEventListener('play',  function() { psVid.currentTime = wsVid.currentTime; psVid.play(); });
     wsVid.addEventListener('pause', function() { psVid.pause(); });
 
     // --- Pointer / touch drag ---
