@@ -451,9 +451,6 @@
       wrap.setPointerCapture(e.pointerId);
       fraction = pointerToFraction(e);
       updateClip();
-      // Pause both for precise frame comparison
-      wsVid.pause();
-      psVid.pause();
     });
 
     wrap.addEventListener('pointermove', function(e) {
@@ -466,10 +463,6 @@
       if (!dragging) return;
       dragging = false;
       wrap.releasePointerCapture(e.pointerId);
-      // Re-sync timestamps then resume playback
-      psVid.currentTime = wsVid.currentTime;
-      wsVid.play();
-      psVid.play();
     }
     wrap.addEventListener('pointerup', stopDrag);
     wrap.addEventListener('pointerleave', stopDrag);
