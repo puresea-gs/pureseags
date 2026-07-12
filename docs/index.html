@@ -7,13 +7,11 @@
   <title>PureSeaGS | Physics-Aware Underwater 3DGS</title>
 
   <style>
-    /* === Reset & Base === */
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
     :root {
       --bg: #ffffff; --text: #333333; --text-muted: #666666;
-      --accent: #2563eb; --accent-hover: #1d4ed8;
-      --border: #e5e7eb; --code-bg: #f8fafc;
+      --accent: #2563eb; --border: #e5e7eb; --code-bg: #f8fafc;
       --max-width: 1100px;
     }
 
@@ -55,67 +53,62 @@
     section .section-subtitle { font-size: 0.95rem; color: var(--text-muted); margin-bottom: 24px; }
     section h3 { font-size: 1.1rem; font-weight: 600; margin: 32px 0 12px; color: #222; }
 
-    /* === Abstract === */
     .abstract p { font-size: 1.02rem; color: #444; text-align: justify; }
 
     /* ============================================= */
     /* === VIDEO COMPARISON SLIDER ================= */
     /* ============================================= */
-    .comparison-section { margin-bottom: 24px; }
+    .comparison-section { margin-bottom: 20px; }
     .comparison-section .scene-title {
-      font-size: 1.1rem; font-weight: 600; color: #222; margin-bottom: 10px;
+      font-size: 1.05rem; font-weight: 600; color: #222; margin-bottom: 8px;
     }
 
-    .slider-container {
+    .slider-wrap {
       position: relative;
       width: 100%;
-      overflow: hidden;
       border-radius: 10px;
+      overflow: hidden;
       box-shadow: 0 2px 12px rgba(0,0,0,0.08);
       background: #000;
       cursor: ew-resize;
       user-select: none;
       -webkit-user-select: none;
-      /* Maintain aspect ratio based on the video's intrinsic size */
+      touch-action: none;
     }
 
-    .slider-video-wrapper {
-      position: relative;
-      width: 100%;
-    }
-
-    .slider-video-wrapper video {
+    /* Bottom video (WS - baseline, always fully visible) */
+    .slider-wrap .vid-base {
       display: block;
       width: 100%;
       height: auto;
     }
 
-    /* The "after" (PureSeaGS) overlay — clipped to show only left portion */
-    .slider-overlay {
+    /* Top overlay: clips the PS video from the right */
+    .slider-clip {
       position: absolute;
       top: 0; left: 0;
       width: 100%; height: 100%;
-      overflow: hidden;
+      pointer-events: none;
     }
-    .slider-overlay video {
-      position: absolute;
-      top: 0; left: 0;
-      width: 100%; height: 100%;
+    .slider-clip video {
+      display: block;
+      width: 100%;
+      height: 100%;
       object-fit: cover;
     }
 
-    /* The vertical slider line */
+    /* Vertical line */
     .slider-line {
       position: absolute;
       top: 0; bottom: 0;
       width: 3px;
-      background: rgba(255,255,255,0.9);
+      background: rgba(255,255,255,0.95);
       pointer-events: none;
-      box-shadow: 0 0 6px rgba(0,0,0,0.3);
       z-index: 2;
+      box-shadow: 0 0 8px rgba(0,0,0,0.35);
     }
 
-    /* The drag handle */
+    /* Drag handle circle */
     .slider-handle {
       position: absolute;
       top: 50%;
@@ -126,11 +119,11 @@
       display: flex; align-items: center; justify-content: center;
       pointer-events: none;
       z-index: 3;
-      box-shadow: 0 2px 10px rgba(0,0,0,0.25);
+      box-shadow: 0 2px 12px rgba(0,0,0,0.3);
     }
-    .slider-handle svg { width: 20px; height: 20px; fill: #444; }
+    .slider-handle svg { width: 18px; height: 18px; fill: #555; }
 
-    /* Labels on the video */
+    /* Labels */
     .slider-label {
       position: absolute; top: 12px;
       padding: 5px 12px;
@@ -145,8 +138,6 @@
     .slider-label.left  { left: 12px; }
     .slider-label.right { right: 12px; }
 
-    /* ============================================= */
-
     /* === BibTeX === */
     .bibtex-box { position: relative; background: var(--code-bg); border: 1px solid var(--border);
       border-radius: 10px; padding: 20px 24px; font-family: 'SF Mono', 'Fira Code', 'Cascadia Code', monospace;
@@ -155,16 +146,13 @@
       font-size: 0.8rem; background: #e5e7eb; border: none; border-radius: 6px; cursor: pointer; }
     .copy-btn:hover { background: #d1d5db; }
 
-    /* === Footer === */
     footer { text-align: center; padding: 32px 0 48px; font-size: 0.85rem; color: #999; }
     footer a { color: #888; }
 
-    /* === Responsive === */
     @media (max-width: 640px) {
       header h1 { font-size: 1.6rem; }
       .btn { padding: 8px 16px; font-size: 0.85rem; }
       .slider-handle { width: 36px; height: 36px; margin-left: -18px; margin-top: -18px; }
-      .slider-handle svg { width: 16px; height: 16px; }
     }
   </style>
 </head>
@@ -187,7 +175,7 @@
 
 <!-- ===== Teaser ===== -->
 <div class="teaser container">
-  <img src="../.assets/pipeline.png" alt="PureSeaGS Pipeline" />
+  <img src="pipeline.png" alt="PureSeaGS Pipeline" />
   <p style="color: #888; font-size: 0.9rem; margin-top: 10px;">
     <strong>PureSeaGS pipeline:</strong> The Anisotropic Medium Field (AMF) decouples water medium properties
     from scene geometry, eliminating gradient entanglement.
@@ -225,88 +213,79 @@
   </div>
 </section>
 
-<!-- ===== Novel View Synthesis — Interactive Slider ===== -->
+<!-- ===== NVS Comparison Sliders ===== -->
 <section>
   <div class="container">
     <h2>Novel View Synthesis</h2>
     <p class="section-subtitle">
-      <strong>Drag the slider</strong> to compare WaterSplatting (left) with PureSeaGS (right).
-      PureSeaGS produces cleaner geometry with fewer floater artifacts.
+      <strong>Drag the handle ⟷</strong> to compare WaterSplatting with PureSeaGS (ours).
     </p>
 
     <!-- Curasao -->
     <div class="comparison-section">
       <div class="scene-title">Cura&ccedil;ao</div>
-      <div class="slider-container" id="slider-curasao">
-        <div class="slider-video-wrapper">
-          <video id="v-curasao-ws" src="videos/curasao_ws.mp4" muted loop playsinline></video>
-          <div class="slider-overlay" id="clip-curasao">
-            <video id="v-curasao-ps" src="videos/curasao_ps.mp4" muted loop playsinline></video>
-          </div>
-          <div class="slider-line" id="line-curasao"></div>
-          <div class="slider-handle" id="handle-curasao">
-            <svg viewBox="0 0 24 24"><path d="M8 5l8 7-8 7V5z"/><path d="M16 5l-8 7 8 7V5z"/></svg>
-          </div>
-          <div class="slider-label left">WaterSplatting</div>
-          <div class="slider-label right">PureSeaGS (Ours)</div>
+      <div class="slider-wrap" id="s-curasao">
+        <video class="vid-base" id="v-curasao-ws" src="videos/curasao_ws.mp4" muted loop playsinline></video>
+        <div class="slider-clip" id="clip-curasao">
+          <video id="v-curasao-ps" src="videos/curasao_ps.mp4" muted loop playsinline></video>
         </div>
+        <div class="slider-line" id="line-curasao"></div>
+        <div class="slider-handle" id="handle-curasao">
+          <svg viewBox="0 0 24 24"><path d="M8 4l8 8-8 8z"/><path d="M16 4l-8 8 8 8z"/></svg>
+        </div>
+        <div class="slider-label left">WaterSplatting</div>
+        <div class="slider-label right">PureSeaGS (Ours)</div>
       </div>
     </div>
 
     <!-- Panama -->
     <div class="comparison-section">
       <div class="scene-title">Panama</div>
-      <div class="slider-container" id="slider-panama">
-        <div class="slider-video-wrapper">
-          <video id="v-panama-ws" src="videos/panama_ws.mp4" muted loop playsinline></video>
-          <div class="slider-overlay" id="clip-panama">
-            <video id="v-panama-ps" src="videos/panama_ps.mp4" muted loop playsinline></video>
-          </div>
-          <div class="slider-line" id="line-panama"></div>
-          <div class="slider-handle" id="handle-panama">
-            <svg viewBox="0 0 24 24"><path d="M8 5l8 7-8 7V5z"/><path d="M16 5l-8 7 8 7V5z"/></svg>
-          </div>
-          <div class="slider-label left">WaterSplatting</div>
-          <div class="slider-label right">PureSeaGS (Ours)</div>
+      <div class="slider-wrap" id="s-panama">
+        <video class="vid-base" id="v-panama-ws" src="videos/panama_ws.mp4" muted loop playsinline></video>
+        <div class="slider-clip" id="clip-panama">
+          <video id="v-panama-ps" src="videos/panama_ps.mp4" muted loop playsinline></video>
         </div>
+        <div class="slider-line" id="line-panama"></div>
+        <div class="slider-handle" id="handle-panama">
+          <svg viewBox="0 0 24 24"><path d="M8 4l8 8-8 8z"/><path d="M16 4l-8 8 8 8z"/></svg>
+        </div>
+        <div class="slider-label left">WaterSplatting</div>
+        <div class="slider-label right">PureSeaGS (Ours)</div>
       </div>
     </div>
 
-    <!-- IUI3-RedSea -->
+    <!-- IUI3 -->
     <div class="comparison-section">
       <div class="scene-title">IUI3-RedSea</div>
-      <div class="slider-container" id="slider-iui3">
-        <div class="slider-video-wrapper">
-          <video id="v-iui3-ws" src="videos/iui3_ws.mp4" muted loop playsinline></video>
-          <div class="slider-overlay" id="clip-iui3">
-            <video id="v-iui3-ps" src="videos/iui3_ps.mp4" muted loop playsinline></video>
-          </div>
-          <div class="slider-line" id="line-iui3"></div>
-          <div class="slider-handle" id="handle-iui3">
-            <svg viewBox="0 0 24 24"><path d="M8 5l8 7-8 7V5z"/><path d="M16 5l-8 7 8 7V5z"/></svg>
-          </div>
-          <div class="slider-label left">WaterSplatting</div>
-          <div class="slider-label right">PureSeaGS (Ours)</div>
+      <div class="slider-wrap" id="s-iui3">
+        <video class="vid-base" id="v-iui3-ws" src="videos/iui3_ws.mp4" muted loop playsinline></video>
+        <div class="slider-clip" id="clip-iui3">
+          <video id="v-iui3-ps" src="videos/iui3_ps.mp4" muted loop playsinline></video>
         </div>
+        <div class="slider-line" id="line-iui3"></div>
+        <div class="slider-handle" id="handle-iui3">
+          <svg viewBox="0 0 24 24"><path d="M8 4l8 8-8 8z"/><path d="M16 4l-8 8 8 8z"/></svg>
+        </div>
+        <div class="slider-label left">WaterSplatting</div>
+        <div class="slider-label right">PureSeaGS (Ours)</div>
       </div>
     </div>
 
-    <!-- Japanese Gardens -->
+    <!-- Japanese -->
     <div class="comparison-section">
       <div class="scene-title">Japanese Gardens — RedSea</div>
-      <div class="slider-container" id="slider-japanese">
-        <div class="slider-video-wrapper">
-          <video id="v-japanese-ws" src="videos/japanese_ws.mp4" muted loop playsinline></video>
-          <div class="slider-overlay" id="clip-japanese">
-            <video id="v-japanese-ps" src="videos/japanese_ps.mp4" muted loop playsinline></video>
-          </div>
-          <div class="slider-line" id="line-japanese"></div>
-          <div class="slider-handle" id="handle-japanese">
-            <svg viewBox="0 0 24 24"><path d="M8 5l8 7-8 7V5z"/><path d="M16 5l-8 7 8 7V5z"/></svg>
-          </div>
-          <div class="slider-label left">WaterSplatting</div>
-          <div class="slider-label right">PureSeaGS (Ours)</div>
+      <div class="slider-wrap" id="s-japanese">
+        <video class="vid-base" id="v-japanese-ws" src="videos/japanese_ws.mp4" muted loop playsinline></video>
+        <div class="slider-clip" id="clip-japanese">
+          <video id="v-japanese-ps" src="videos/japanese_ps.mp4" muted loop playsinline></video>
         </div>
+        <div class="slider-line" id="line-japanese"></div>
+        <div class="slider-handle" id="handle-japanese">
+          <svg viewBox="0 0 24 24"><path d="M8 4l8 8-8 8z"/><path d="M16 4l-8 8 8 8z"/></svg>
+        </div>
+        <div class="slider-label left">WaterSplatting</div>
+        <div class="slider-label right">PureSeaGS (Ours)</div>
       </div>
     </div>
   </div>
@@ -330,98 +309,81 @@
 </section>
 
 <footer class="container">
-  <p>
-    Template based on <a href="https://nerfies.github.io/">Nerfies</a>.
-    &copy; 2025
-  </p>
+  <p>Template based on <a href="https://nerfies.github.io/">Nerfies</a>. &copy; 2025</p>
 </footer>
 
-<!-- ============================================= -->
-<!-- === SLIDER LOGIC ============================ -->
-<!-- ============================================= -->
 <script>
 (function() {
-  // --- Sync all WS/PS video pairs ---
   const scenes = ['curasao', 'panama', 'iui3', 'japanese'];
 
-  const sliders = {};
-
   scenes.forEach(scene => {
-    const container = document.getElementById('slider-' + scene);
-    const wsVid = document.getElementById('v-' + scene + '-ws');
-    const psVid = document.getElementById('v-' + scene + '-ps');
+    const wrap   = document.getElementById('s-' + scene);
+    const wsVid  = document.getElementById('v-' + scene + '-ws');
+    const psVid  = document.getElementById('v-' + scene + '-ps');
     const clip   = document.getElementById('clip-' + scene);
     const line   = document.getElementById('line-' + scene);
     const handle = document.getElementById('handle-' + scene);
 
-    if (!container || !wsVid || !psVid) return;
+    if (!wrap || !wsVid || !psVid) return;
 
-    // State
-    let fraction = 0.5; // 0 = all WS, 1 = all PS
-
-    function updateClip() {
-      const pct = fraction * 100;
-      clip.style.width = pct + '%';
-      line.style.left = pct + '%';
-      handle.style.left = pct + '%';
-    }
-
-    // Initialize at 50/50
-    updateClip();
-
-    // --- Video sync ---
-    // Play both together
-    wsVid.addEventListener('play', () => { psVid.currentTime = wsVid.currentTime; psVid.play(); });
-    psVid.addEventListener('play', () => { wsVid.currentTime = psVid.currentTime; wsVid.play(); });
-    wsVid.addEventListener('pause', () => psVid.pause());
-    psVid.addEventListener('pause', () => wsVid.pause());
-    wsVid.addEventListener('seeked', () => { psVid.currentTime = wsVid.currentTime; });
-    psVid.addEventListener('seeked', () => { wsVid.currentTime = psVid.currentTime; });
-
-    // --- Pointer events ---
+    let fraction = 0.5; // 0 = PS hidden (all WS), 1 = PS full (all PS)
     let dragging = false;
 
-    function setFractionFromEvent(e) {
-      const rect = container.getBoundingClientRect();
-      const x = (e.touches ? e.touches[0].clientX : e.clientX);
-      fraction = Math.max(0.02, Math.min(0.98, (x - rect.left) / rect.width));
-      updateClip();
+    // --- Clip using clip-path (right side hidden based on fraction) ---
+    // fraction=0 → clip 100% from right (PS hidden)
+    // fraction=0.5 → clip 50% from right
+    // fraction=1 → clip 0% from right (PS fully visible)
+    function updateClip() {
+      const pct = (1 - fraction) * 100;
+      clip.style.clipPath = 'inset(0 ' + pct + '% 0 0)';
+      line.style.left = (fraction * 100) + '%';
+      handle.style.left = (fraction * 100) + '%';
+    }
+    updateClip();
+
+    // --- Sync video playback ---
+    function syncPlay()  { psVid.currentTime = wsVid.currentTime; psVid.play(); }
+    function syncPause() { psVid.pause(); }
+    wsVid.addEventListener('play',  syncPlay);
+    wsVid.addEventListener('pause', syncPause);
+    wsVid.addEventListener('seeked', function() { psVid.currentTime = wsVid.currentTime; });
+
+    // --- Pointer / touch drag ---
+    function pointerToFraction(e) {
+      const rect = wrap.getBoundingClientRect();
+      const x = e.touches ? e.touches[0].clientX : e.clientX;
+      return Math.max(0.02, Math.min(0.98, (x - rect.left) / rect.width));
     }
 
-    container.addEventListener('pointerdown', (e) => {
+    wrap.addEventListener('pointerdown', function(e) {
       dragging = true;
-      container.setPointerCapture(e.pointerId);
-      setFractionFromEvent(e);
-      // Pause while dragging for precise comparison
+      wrap.setPointerCapture(e.pointerId);
+      fraction = pointerToFraction(e);
+      updateClip();
       wsVid.pause();
-      psVid.pause();
     });
 
-    container.addEventListener('pointermove', (e) => {
+    wrap.addEventListener('pointermove', function(e) {
       if (!dragging) return;
-      setFractionFromEvent(e);
+      fraction = pointerToFraction(e);
+      updateClip();
     });
 
-    container.addEventListener('pointerup', (e) => {
+    function stopDrag(e) {
       if (!dragging) return;
       dragging = false;
-      container.releasePointerCapture(e.pointerId);
-      // Resume playback
+      wrap.releasePointerCapture(e.pointerId);
       wsVid.play();
-      psVid.play();
-    });
+    }
+    wrap.addEventListener('pointerup', stopDrag);
+    wrap.addEventListener('pointerleave', stopDrag);
 
-    container.addEventListener('pointerleave', () => {
-      dragging = false;
-    });
-
-    // Start playing
-    wsVid.play().catch(() => {});
-    psVid.play().catch(() => {});
-
-    sliders[scene] = { fraction, updateClip };
+    // --- Start playing loop ---
+    wsVid.loop = true;
+    psVid.loop = true;
+    wsVid.play().catch(function() {});
+    psVid.play().catch(function() {});
   });
-
 })();
 </script>
 
