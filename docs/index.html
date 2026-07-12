@@ -56,11 +56,15 @@
     .abstract p { font-size: 1.02rem; color: #444; text-align: justify; }
 
     /* ============================================= */
-    /* === VIDEO COMPARISON SLIDER ================= */
+    /* === 2×2 VIDEO COMPARISON GRID =============== */
     /* ============================================= */
-    .comparison-section { margin-bottom: 20px; }
-    .comparison-section .scene-title {
-      font-size: 1.05rem; font-weight: 600; color: #222; margin-bottom: 8px;
+    .grid-2x2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+    @media (max-width: 768px) {
+      .grid-2x2 { grid-template-columns: 1fr; }
     }
 
     .slider-wrap {
@@ -76,47 +80,39 @@
       touch-action: none;
     }
 
-    /* Bottom video (WS - baseline, always fully visible) */
     .slider-wrap .vid-base {
       display: block;
       width: 100%;
-      height: auto;
     }
 
-    /* Top overlay: clips the PS video with overflow:hidden */
     .slider-clip {
       position: absolute;
       top: 0; left: 0;
       height: 100%;
       overflow: hidden;
       pointer-events: none;
-      /* width set by JS */
     }
     .slider-clip video {
       position: absolute;
       top: 0; left: 0;
       height: 100%;
       display: block;
-      /* width set by JS in pixels to match container */
     }
 
-    /* Vertical line */
     .slider-line {
       position: absolute;
       top: 0; bottom: 0;
-      width: 3px;
-      background: rgba(255,255,255,0.95);
+      width: 2px;
+      background: rgba(255,255,255,0.9);
       pointer-events: none;
       z-index: 2;
-      box-shadow: 0 0 8px rgba(0,0,0,0.35);
     }
 
-    /* Drag handle circle */
     .slider-handle {
       position: absolute;
       top: 50%;
-      width: 44px; height: 44px;
-      margin-left: -22px; margin-top: -22px;
+      width: 36px; height: 36px;
+      margin-left: -18px; margin-top: -18px;
       background: rgba(255,255,255,0.95);
       border-radius: 50%;
       display: flex; align-items: center; justify-content: center;
@@ -124,22 +120,33 @@
       z-index: 3;
       box-shadow: 0 2px 12px rgba(0,0,0,0.3);
     }
-    .slider-handle svg { width: 18px; height: 18px; fill: #555; }
+    .slider-handle svg { width: 15px; height: 15px; fill: #555; }
 
-    /* Labels */
     .slider-label {
-      position: absolute; top: 12px;
-      padding: 5px 12px;
-      font-size: 0.82rem; font-weight: 600;
+      position: absolute; top: 8px;
+      padding: 3px 8px;
+      font-size: 0.72rem; font-weight: 600;
       color: #fff;
       background: rgba(0,0,0,0.55);
-      border-radius: 6px;
+      border-radius: 4px;
       pointer-events: none;
       z-index: 4;
-      backdrop-filter: blur(4px);
     }
-    .slider-label.left  { left: 12px; }
-    .slider-label.right { right: 12px; }
+    .slider-label.left  { left: 8px; }
+    .slider-label.right { right: 8px; }
+
+    .scene-name {
+      position: absolute; bottom: 8px; left: 50%;
+      transform: translateX(-50%);
+      padding: 3px 10px;
+      font-size: 0.78rem; font-weight: 600;
+      color: #fff;
+      background: rgba(0,0,0,0.55);
+      border-radius: 4px;
+      pointer-events: none;
+      z-index: 4;
+      white-space: nowrap;
+    }
 
     /* === BibTeX === */
     .bibtex-box { position: relative; background: var(--code-bg); border: 1px solid var(--border);
@@ -216,7 +223,7 @@
   </div>
 </section>
 
-<!-- ===== NVS Comparison Sliders ===== -->
+<!-- ===== NVS 2×2 Comparison Grid ===== -->
 <section>
   <div class="container">
     <h2>Novel View Synthesis</h2>
@@ -224,13 +231,13 @@
       <strong>Drag the handle ⟷</strong> to compare WaterSplatting with PureSeaGS (ours).
     </p>
 
-    <!-- Curasao -->
-    <div class="comparison-section">
-      <div class="scene-title">Cura&ccedil;ao</div>
+    <div class="grid-2x2">
+
+      <!-- Curasao -->
       <div class="slider-wrap" id="s-curasao">
-        <video class="vid-base" id="v-curasao-ws" src="videos/curasao_ws.mp4" muted loop playsinline></video>
+        <video class="vid-base" id="v-curasao-ws" src="videos/curasao_ws_slow.mp4" muted loop playsinline></video>
         <div class="slider-clip" id="clip-curasao">
-          <video id="v-curasao-ps" src="videos/curasao_ps.mp4" muted loop playsinline></video>
+          <video id="v-curasao-ps" src="videos/curasao_ps_slow.mp4" muted loop playsinline></video>
         </div>
         <div class="slider-line" id="line-curasao"></div>
         <div class="slider-handle" id="handle-curasao">
@@ -238,16 +245,14 @@
         </div>
         <div class="slider-label left">PureSeaGS (Ours)</div>
         <div class="slider-label right">WaterSplatting</div>
+        <div class="scene-name">Cura&ccedil;ao</div>
       </div>
-    </div>
 
-    <!-- Panama -->
-    <div class="comparison-section">
-      <div class="scene-title">Panama</div>
+      <!-- Panama -->
       <div class="slider-wrap" id="s-panama">
-        <video class="vid-base" id="v-panama-ws" src="videos/panama_ws.mp4" muted loop playsinline></video>
+        <video class="vid-base" id="v-panama-ws" src="videos/panama_ws_slow.mp4" muted loop playsinline></video>
         <div class="slider-clip" id="clip-panama">
-          <video id="v-panama-ps" src="videos/panama_ps.mp4" muted loop playsinline></video>
+          <video id="v-panama-ps" src="videos/panama_ps_slow.mp4" muted loop playsinline></video>
         </div>
         <div class="slider-line" id="line-panama"></div>
         <div class="slider-handle" id="handle-panama">
@@ -255,16 +260,14 @@
         </div>
         <div class="slider-label left">PureSeaGS (Ours)</div>
         <div class="slider-label right">WaterSplatting</div>
+        <div class="scene-name">Panama</div>
       </div>
-    </div>
 
-    <!-- IUI3 -->
-    <div class="comparison-section">
-      <div class="scene-title">IUI3-RedSea</div>
+      <!-- IUI3 -->
       <div class="slider-wrap" id="s-iui3">
-        <video class="vid-base" id="v-iui3-ws" src="videos/iui3_ws.mp4" muted loop playsinline></video>
+        <video class="vid-base" id="v-iui3-ws" src="videos/iui3_ws_slow.mp4" muted loop playsinline></video>
         <div class="slider-clip" id="clip-iui3">
-          <video id="v-iui3-ps" src="videos/iui3_ps.mp4" muted loop playsinline></video>
+          <video id="v-iui3-ps" src="videos/iui3_ps_slow.mp4" muted loop playsinline></video>
         </div>
         <div class="slider-line" id="line-iui3"></div>
         <div class="slider-handle" id="handle-iui3">
@@ -272,16 +275,14 @@
         </div>
         <div class="slider-label left">PureSeaGS (Ours)</div>
         <div class="slider-label right">WaterSplatting</div>
+        <div class="scene-name">IUI3-RedSea</div>
       </div>
-    </div>
 
-    <!-- Japanese -->
-    <div class="comparison-section">
-      <div class="scene-title">Japanese Gardens — RedSea</div>
+      <!-- Japanese Gardens -->
       <div class="slider-wrap" id="s-japanese">
-        <video class="vid-base" id="v-japanese-ws" src="videos/japanese_ws.mp4" muted loop playsinline></video>
+        <video class="vid-base" id="v-japanese-ws" src="videos/japanese_ws_slow.mp4" muted loop playsinline></video>
         <div class="slider-clip" id="clip-japanese">
-          <video id="v-japanese-ps" src="videos/japanese_ps.mp4" muted loop playsinline></video>
+          <video id="v-japanese-ps" src="videos/japanese_ps_slow.mp4" muted loop playsinline></video>
         </div>
         <div class="slider-line" id="line-japanese"></div>
         <div class="slider-handle" id="handle-japanese">
@@ -289,7 +290,9 @@
         </div>
         <div class="slider-label left">PureSeaGS (Ours)</div>
         <div class="slider-label right">WaterSplatting</div>
+        <div class="scene-name">Japanese Gardens</div>
       </div>
+
     </div>
   </div>
 </section>
