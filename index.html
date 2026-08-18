@@ -424,20 +424,52 @@
     updateClip();
     window.addEventListener('resize', updateClip);
 
+    let retryTimer = null;
+
+    function keepOursPlaying() {
+      if (wsVid.paused || !psVid.paused || psVid.ended || psVid.readyState < HTMLMediaElement.HAVE_CURRENT_DATA) return;
+      const playPromise = psVid.play();
+      if (playPromise && typeof playPromise.catch === 'function') {
+        playPromise.catch(function() {});
+      }
+    }
+
+    function retryOursPlayback() {
+      clearTimeout(retryTimer);
+      retryTimer = setTimeout(function() {
+        if (!wsVid.paused) keepOursPlaying();
+      }, 150);
+    }
+
     // --- Sync: rAF continuous sync (WS master → PS slave), drift-proof ---
     function syncLoop() {
-      if (!dragging && wsVid && !wsVid.paused) {
-        if (Math.abs(psVid.currentTime - wsVid.currentTime) > 0.04) {
+      if (!dragging && !wsVid.paused &&
+          psVid.readyState >= HTMLMediaElement.HAVE_CURRENT_DATA && !psVid.seeking) {
+        const drift = psVid.currentTime - wsVid.currentTime;
+        if (Math.abs(drift) > 0.25) {
           psVid.currentTime = wsVid.currentTime;
+          psVid.playbackRate = 1;
+        } else {
+          const targetRate = Math.abs(drift) < 0.03 ? 1 : (drift < 0 ? 1.02 : 0.98);
+          if (psVid.playbackRate !== targetRate) psVid.playbackRate = targetRate;
         }
+        keepOursPlaying();
       }
       requestAnimationFrame(syncLoop);
     }
     syncLoop();
 
     // Event-based sync for play/pause coordination
-    wsVid.addEventListener('play',  function() { psVid.currentTime = wsVid.currentTime; psVid.play(); });
-    wsVid.addEventListener('pause', function() { psVid.pause(); });
+    wsVid.addEventListener('play',  function() {
+      if (psVid.readyState >= HTMLMediaElement.HAVE_CURRENT_DATA) {
+        psVid.currentTime = wsVid.currentTime;
+      }
+      keepOursPlaying();
+    });
+    wsVid.addEventListener('pause', function() { psVid.pause(); psVid.playbackRate = 1; });
+    ['canplay', 'canplaythrough', 'loadeddata', 'playing', 'progress', 'stalled', 'waiting'].forEach(function(eventName) {
+      psVid.addEventListener(eventName, retryOursPlayback);
+    });
 
     // --- Pointer / touch drag ---
     function pointerToFraction(e) {
@@ -450,6 +482,7 @@
       dragging = true;
       wrap.setPointerCapture(e.pointerId);
       fraction = pointerToFraction(e);
+      psVid.playbackRate = 1;
       updateClip();
     });
 
@@ -463,6 +496,7 @@
       if (!dragging) return;
       dragging = false;
       wrap.releasePointerCapture(e.pointerId);
+      psVid.playbackRate = 1;
     }
     wrap.addEventListener('pointerup', stopDrag);
     wrap.addEventListener('pointerleave', stopDrag);
