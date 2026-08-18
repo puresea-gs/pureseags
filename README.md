@@ -4,14 +4,14 @@
     <span style="font-size: 1.2rem; font-weight: normal;">Decoupled Physics-Aware 3D Gaussian Splatting for Underwater Scene Reconstruction</span>
   </h1>
   <p align="center">
-    <a href="https://github.com/LZF">LZF</a>
+    <a href="https://github.com/puresea-gs/pureseags">PureSeaGS</a>
   </p>
   <p align="center">
     <b><i>Under Review</i></b>
   </p>
   <p align="center">
     <a href="https://arxiv.org/abs/XXXX.XXXXX">📄 Paper</a> |
-    <a href="https://puresea-gs.github.io/">🌐 Project Page</a>
+    <a href="https://puresea-gs.github.io/pureseags/">🌐 Project Page</a>
   </p>
 </p>
 
