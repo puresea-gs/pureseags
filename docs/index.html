@@ -187,8 +187,8 @@
 <div class="teaser container">
   <img src="pipeline.png" alt="PureSeaGS Pipeline" />
   <p style="color: #888; font-size: 0.9rem; margin-top: 10px;">
-    <strong>PureSeaGS pipeline:</strong> The Anisotropic Medium Field (AMF) decouples water medium properties
-    from scene geometry, eliminating gradient entanglement.
+    <strong>PureSeaGS pipeline:</strong> The Anisotropic Medium Field (AMF) separates the ray-conditioned water
+    medium from discrete scene geometry, then couples them through an explicit underwater renderer.
   </p>
 </div>
 
@@ -197,28 +197,27 @@
   <div class="container">
     <h2>Abstract</h2>
     <p>
-      Underwater 3D reconstruction inherently suffers from the physical conflict between continuous optical media
-      and existing discrete representation methods. Applying explicit 3D Gaussian Splatting (3DGS) to continuous
-      water volumes inevitably introduces a <strong>representation mismatch</strong>, causing severe
-      <strong>gradient entanglement</strong> during optimization. This forces the model to generate semi-transparent
-      floater artifacts to compensate for medium absorption.
+      Underwater 3D reconstruction inherently suffers from a physical mismatch between continuous optical media
+      and discrete scene representations. Applying explicit 3D Gaussian Splatting (3DGS) to underwater scenes can
+      therefore encourage semi-transparent <strong>floater artifacts</strong> that compensate for medium absorption
+      and corrupt the recovered geometry.
     </p>
     <p style="margin-top:12px;">
-      To resolve this at the architectural level, we propose <strong>PureSeaGS</strong>, a physics-aware and
-      prior-driven decoupled underwater 3DGS framework. The core of our approach is the
-      <strong>Anisotropic Medium Field (AMF)</strong>, which utilizes separate prediction heads for distinct
-      physical quantities — medium color, spectral attenuation, and backscattering — achieving
-      <strong>feature-level decoupling</strong> that severs gradient interference between the continuous water
-      volume and discrete scene geometry during backpropagation. We further introduce a
-      <strong>depth-guided enhancement mechanism</strong> and a <strong>physics-regularized loss formulation</strong>
-      to stabilize optimization.
+      To address this issue at the architectural level, we propose <strong>PureSeaGS</strong>, a physics-aware and
+      prior-driven underwater 3DGS framework. Its core component is the
+      <strong>Anisotropic Medium Field (AMF)</strong>, a ray-conditioned medium model that combines a direct
+      directional pathway, a learned directional encoder, geometry-aware depth conditioning, a shared medium
+      representation, and dual-branch color prediction. The AMF predicts the spectral parameters required by an
+      explicit underwater image-formation model while preserving a direct route for view-dependent medium
+      appearance. Physics-regularized losses further stabilize joint optimization under severe underwater
+      appearance variations.
     </p>
     <p style="margin-top:12px;">
-      Extensive experiments demonstrate that PureSeaGS effectively suppresses floater artifacts and preserves
-      the underlying 3D geometric structure. Our method achieves state-of-the-art novel view synthesis performance,
-      reaching a <strong>PSNR of 32.40 dB</strong> on the Cura&ccedil;ao dataset — a significant margin of
-      <strong>0.83 dB</strong> over the best existing baseline — while fully maintaining the real-time rendering
-      efficiency of the native 3DGS rasterizer.
+      Experiments show that PureSeaGS reduces floater artifacts and preserves fine geometric structures
+      qualitatively. It achieves the best average novel-view PSNR among the compared methods and reaches a
+      <strong>PSNR of 32.49 dB</strong> on the Cura&ccedil;ao dataset — <strong>0.92 dB</strong> above the strongest
+      baseline on that scene — while retaining an efficient rasterization-based pipeline. Implementation-level
+      profiling indicates approximately <strong>15% additional forward-pass cost</strong> relative to vanilla 3DGS.
     </p>
   </div>
 </section>
